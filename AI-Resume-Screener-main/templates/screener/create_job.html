@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title mb-4"><i class="fas fa-plus-circle me-2"></i>Create Job Description</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Job Title *</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Job Description *</label>
+                        <textarea class="form-control" id="description" name="description" rows="6" required
+                            placeholder="Enter detailed job description, responsibilities, and requirements..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="required_skills" class="form-label">Required Skills *</label>
+                        <input type="text" class="form-control" id="required_skills" name="required_skills" required
+                            placeholder="python, django, machine learning, nlp (comma-separated)">
+                        <small class="text-muted">Enter skills separated by commas</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="experience_required" class="form-label">Experience Required *</label>
+                        <input type="text" class="form-control" id="experience_required" name="experience_required" required
+                            placeholder="e.g., 3-5 years">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="education_required" class="form-label">Education Required *</label>
+                        <input type="text" class="form-control" id="education_required" name="education_required" required
+                            placeholder="e.g., Bachelor's in Computer Science">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Create Job
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title mb-4">{{ resume.candidate_name }}</h3>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> {{ resume.email|default:"Not provided" }}</p>
+                        <p><strong><i class="fas fa-phone me-2"></i>Phone:</strong> {{ resume.phone|default:"Not provided" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-calendar me-2"></i>Uploaded:</strong> {{ resume.uploaded_at|date:"M d, Y H:i" }}</p>
+                        <p><strong><i class="fas fa-briefcase me-2"></i>Job:</strong> {{ resume.job_description.title }}</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h5 class="mb-3"><i class="fas fa-tools me-2"></i>Extracted Skills</h5>
+                <div class="mb-3">
+                    {% if resume.extracted_skills %}
+                        {% with skills=resume.extracted_skills|split:',' %}
+                            {% for skill in skills %}
+                                {% if skill|trim %}
+                                <span class="badge bg-primary me-1 mb-1">{{ skill|trim }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    {% else %}
+                    <p class="text-muted">No skills extracted</p>
+                    {% endif %}
+                </div>
+
+                <h5 class="mb-3"><i class="fas fa-briefcase me-2"></i>Experience</h5>
+                <p>{{ resume.extracted_experience|truncatewords:100 }}</p>
+
+                <h5 class="mb-3"><i class="fas fa-graduation-cap me-2"></i>Education</h5>
+                <p>{{ resume.extracted_education|truncatewords:50 }}</p>
+
+                <h5 class="mb-3"><i class="fas fa-file-alt me-2"></i>Resume Text</h5>
+                <div style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                    <pre style="white-space: pre-wrap;">{{ resume.extracted_text|truncatewords:500 }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4"><i class="fas fa-chart-bar me-2"></i>Match Scores</h5>
+                
+                <div class="mb-4 text-center">
+                    <h2 class="display-3 mb-2">{{ resume.match_score }}%</h2>
+                    <span class="badge badge-score 
+                        {% if resume.match_score >= 70 %}badge-high
+                        {% elif resume.match_score >= 50 %}badge-medium
+                        {% else %}badge-low{% endif %}">
+                        Overall Match
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Skills Match</span>
+                        <strong>{{ resume.skills_match_score }}%</strong>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: {{ resume.skills_match_score }}%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Experience Match</span>
+                        <strong>{{ resume.experience_match_score }}%</strong>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-info" style="width: {{ resume.experience_match_score }}%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Education Match</span>
+                        <strong>{{ resume.education_match_score }}%</strong>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: {{ resume.education_match_score }}%"></div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="mb-3">Actions</h6>
+                <form method="post" class="d-grid gap-2">
+                    {% csrf_token %}
+                    {% if resume.is_shortlisted %}
+                    <button type="submit" name="action" value="reject" class="btn btn-warning">
+                        <i class="fas fa-times me-2"></i>Remove from Shortlist
+                    </button>
+                    {% else %}
+                    <button type="submit" name="action" value="shortlist" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Shortlist Candidate
+                    </button>
+                    {% endif %}
+                    <a href="{{ resume.resume_file.url }}" class="btn btn-outline-primary" download>
+                        <i class="fas fa-download me-2"></i>Download Resume
+                    </a>
+                    <a href="{% url 'job_detail' resume.job_description.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Job
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

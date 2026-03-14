@@ -1,0 +1,9 @@
+Django
+PyPDF2
+python-docx
+scikit-learn
+nltk
+pandas
+sentence-transformers
+numpy
+spacy
